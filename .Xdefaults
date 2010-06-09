@@ -1,0 +1,406 @@
+!-----------------------------------------------------------------------
+! file: ~/.Xdefaults
+! author: leprosys
+!-----------------------------------------------------------------------
+ 
+!{{{ XFT
+!Xft.dpi: 96
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.hintstyle: hintfull
+Xft.rgba: rgb
+!}}}
+ 
+ 
+! {{{ Xcursor
+!Xcursor*theme : Vanilla-DMZ-AA
+!Xcursor*size : 10
+! }}}
+ 
+ 
+! {{{ URxvt
+!URxvt*geometry : 124x124
+!URxvt*termName : rxvt-256color
+!URxvt*imLocale : en_US.UTF-8
+URxvt*saveLines : 32767
+ 
+URxvt*scrollBar : false
+URxvt*internalBorder : 0
+URxvt*secondaryScroll : true
+ 
+URxvt*depth : 32
+URxvt*buffered : true
+URxvt*transparent : true
+URxvt.foreground : white
+URxvt*shading : 20
+URxvt.tintColor: #000000
+!#URxvt*fading : 10
+ 
+URxvt*cursorUnderline : true
+URxvt*cursorBlink : true
+ 
+!URxvt*urgentOnBell : true
+ 
+Urxvt*font : -*-dina-medium-*-*-*-13-*-*-*-*-*-*-*
+URxvt*boldFont : -*-dina-bold-*-*-*-13-*-*-*-*-*-*-*
+!URxvt.font: xft:Monospace:pixelsize=10:antialias=true
+!URxvt*italicFont : -*-dina-medium-i-normal-*-12-*-*-*-*-*-iso8859-1
+!URxvt*boldItalicFont : -*-dina-bold-i-normal-*-12-*-*-*-*-*-iso8859-1
+ 
+!URxvt*font : xft:DejaVu Sans Mono:antialias=true:pixelsize=13
+!URxvt*boldFont : xft:DejaVu Sans 
+!Mono:style=bold:antialias=true:pixelsize=12
+!-----1-
+URxvt*italicFont : xft:DejaVu Sans 
+!-----2--
+!Mono:style=italic:antialias=true:pixelsize=12
+!-----1----
+URxvt*boldItalicFont : xft:DejaVu Sans 
+Mono:style=bolditalic:antialias=true:pixelsize=12
+!-----2---
+ 
+!URxvt*perl-lib : /usr/lib/urxvt/perl/
+!URxvt*perl-ext-common : default,matcher,searchable-scrollback,tabbed
+!URxvt*urlLauncher : /usr/bin/swiftweasel
+!URxvt*matcher*button : 1
+!URxvt*matcher*pattern.1 : \\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+ 
+! }}}
+ 
+ 
+!{{{ Xterm
+xterm*internalBorder: 0
+xterm*loginShell: true
+xterm*scrollBar: false
+xterm*cursorBlink: false
+xterm*geometry: 110x30
+xterm*saveLines: 65535
+xterm*dynamicColors: on
+xterm*highlightSelection: true
+ 
+! Appearance
+!xterm*utf8: 2
+!xterm*eightBitInput: true
+!xter*faceName: -*-dina-medium-r-normal-*-15-*-*-*-*-*-iso8859-1
+ 
+! Zenburn
+!xterm*background: #3f3f3f
+!xterm*foreground: #dcdccc
+!xterm*color0: #1E2320
+!xterm*color1: #705050
+!xterm*color2: #60b48a
+!xterm*color3: #dfaf8f
+!xterm*color4: #506070
+!xterm*color5: #dc8cc3
+!xterm*color6: #8cd0d3
+!xterm*color7: #dcdccc
+!xterm*color8: #709080
+!xterm*color9: #dca3a3
+!xterm*color10: #c3bf9f
+!xterm*color11: #f0dfaf
+!xterm*color12: #94bff3
+!xterm*color13: #ec93d3
+!xterm*color14: #93e0e3
+!xterm*color15: #ffffff
+!}}}
+ 
+ 
+! {{{ Colours
+URxvt*background: rgba:0000/0000/0000/dddd
+!underlineColor: #619AF4
+!background: #262726
+!foreground: #cacaca
+!color0: rgba:0000/0000/0000/dddd
+ 
+! Daisuke
+!*background: #1c1c1c
+!*foreground: #dcdccc
+!black
+!*color0: #1e1e1e
+!*color8: #505050
+!red
+!*color1: #b04020
+!*color9: #dd4010
+!green
+!*color2: #afd700
+!*color10: #daff30
+!yellow
+!*color3: #f7cf0a
+!*color11: #fce70d
+!blue
+!*color4: #3060aa
+!*color12: #6099dd
+!magenta
+!*color5: #d6156c
+!*color13: #fe4365
+!cyan
+!*color6: #a0c2de
+!*color14: #c9dee8
+!white
+!*color7: #808080
+!*color15: #b0b0b0
+ 
+! MrElendig
+! black
+!*color0: #000000
+!*color8: #9999AA
+! red
+!*color1: #DE1923
+!*color9: #FF6050
+! green
+!*color2: #559933
+!*color10: #66D077
+! yellow
+!*color3: #FF9922
+!*color11: #FFFFAF
+! blue
+!*color4: #3579A8
+!*color12: #4EB4FA
+! magenta
+!*color5: #BB88DD
+!*color13: #D7AFD7
+! cyan
+!*color6: #00BBDD
+!*color14: #0DEBFF
+! white
+!*color7: #C7C7C7
+!*color15: #D9D9D9
+ 
+! Gigamo
+! Black
+!*color0: #1e1e1e
+!*color8: #555753
+! Red
+!*color1: #CC0000
+!*color9: #EF2929
+! Green
+!*color2: #4E9A06
+!*color10: #8AE234
+! Yellow
+!*color3: #C4A000
+!*color11: #FCE94F
+! Blue
+!*color4: #3465A4
+!*color12: #729FCF
+! Purple
+!*color5: #75507B
+!*color13: #AD7FA8
+! Cyan
+!*color6: rgb:06/98/9A
+!*color14: #34E2E2
+! White
+!*color7: #9f9f9f
+!*color15: #e0e0e0
+ 
+! Zenburn color-scheme
+!*background: #3f3f3f
+!*foreground: #dcdccc
+! black + red
+!*color0: #3f3f3f
+!*color0: #1E2320
+!*color1: #705050
+! green + yellow
+!*color2: #60b48a
+!*color3: #dfaf8f
+! blue + purple
+!*color4: #506070
+!*color5: #dc8cc3
+! cyan + white
+!*color6: #8cd0d3
+!*color7: #dcdccc
+! bright-black + bright-red
+!*color8: #709080
+!*color9: #dca3a3
+! bright-green + bright-yellow
+!*color10: #c3bf9f
+!*color11: #f0dfaf
+! bright-blue + bright-purple
+!*color12: #94bff3
+!*color13: #ec93d3
+! bright-cyan + bright-white
+!*color14: #93e0e3
+!*color15: #ffffff
+ 
+! SuperTrain
+!*background: #111111
+!*foreground: #cacaca
+!black
+!*color0: #080808
+!*color8: #505050
+!red
+!*color1: #cc252d
+!*color9: #b5313a
+!green
+!*color2: #afd700
+!*color10: #daff30
+!yellow
+!*color3: #f7cf0a
+!*color11: #f2b700
+!!blue
+!*color4: #3060aa
+!*color12: #6099dd
+!magenta
+!*color5: #fe4365
+!*color13: #d6156c
+!cyan
+!*color6: #a0c2de
+!*color14: #c9dee8
+!white
+!*color7: #808080
+!*color15: #b0b0b0
+ 
+! }}}
+ 
+ 
+!{{{ Xmessage
+Xmessage*font: -xos4-terminus-*-*-*-*-*-*-*-*-*-*-iso8859-2
+Xmessage*background: #3F3F3F
+Xmessage*foreground: #F0DFAF
+Xmessage*form.*.shapeStyle: rectangle
+Xmessage*Scrollbar.width: 1
+Xmessage*Scrollbar.borderWidth: 0
+!Xmessage.form.message.Scroll: WhenNeeded
+Xmessage*Buttons: Quit
+Xmessage*defaultButton: Quit
+!Xmessage*geometry: +20+20
+!}}}
+ 
+ 
+!{{{ Xclipboard
+xclipboard.geometry: 287x195+993+15
+XClipboard*international: true
+XClipboard*font: -xos4-terminus-*-*-*-*-*-*-*-*-*-*-iso8859-2
+XClipboard*borderColor: #3F3F3F
+XClipboard*cursorColor: Gray93
+XClipboard*Foreground: #F0DFAF
+XClipboard*Background: #3F3F3F
+XClipboard*form.*.shapeStyle: rectangle
+!}}}
+ 
+ 
+!{{{ Xcalc
+xcalc*geometry: 200x275
+xcalc.ti.bevel.background: #111111
+xcalc.ti.bevel.screen.background: #000000
+xcalc.ti.bevel.screen.DEG.background: #000000
+xcalc.ti.bevel.screen.DEG.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.GRAD.background: #000000
+xcalc.ti.bevel.screen.GRAD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.RAD.background: #000000
+xcalc.ti.bevel.screen.RAD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.INV.background: #000000
+xcalc.ti.bevel.screen.INV.foreground: Red
+xcalc.ti.bevel.screen.LCD.background: #000000
+xcalc.ti.bevel.screen.LCD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.LCD.shadowWidth: 0
+xcalc.ti.bevel.screen.M.background: #000000
+xcalc.ti.bevel.screen.M.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.P.background: #000000
+xcalc.ti.bevel.screen.P.foreground: Yellow
+xcalc.ti.Command.foreground: White
+xcalc.ti.Command.background: #777777
+xcalc.ti.button5.background: Orange3
+xcalc.ti.button19.background: #611161
+xcalc.ti.button18.background: #611161
+xcalc.ti.button20.background: #611111
+xcalc.ti.button25.background: #722222
+xcalc.ti.button30.background: #833333
+xcalc.ti.button35.background: #944444
+xcalc.ti.button40.background: #a55555
+xcalc.ti.button22.background: #222262
+xcalc.ti.button23.background: #222262
+xcalc.ti.button24.background: #222272
+xcalc.ti.button27.background: #333373
+xcalc.ti.button28.background: #333373
+xcalc.ti.button29.background: #333373
+xcalc.ti.button32.background: #444484
+xcalc.ti.button33.background: #444484
+xcalc.ti.button34.background: #444484
+xcalc.ti.button37.background: #555595
+xcalc.ti.button38.background: #555595
+xcalc.ti.button39.background: #555595
+XCalc*Cursor: hand2
+XCalc*ShapeStyle: rectangle
+!}}}
+ 
+ 
+!{{{ Xfontsel
+XFontSel*menu*showUnselectable: false
+XFontSel*sampleText.background: TEXTBG
+XFontSel*MenuButton.shadowWidth: 0
+XFontsel*Toggle*ToggleStyle: check
+XFontsel*MenuButton*Justify: left
+XFontsel*MenuButton*MenuButtonStyle: select
+xfontsel.pane.commandBox.quitButton.background: #777777
+xfontsel.pane.commandBox.quitButton.foreground: snow
+xfontsel.pane.commandBox.ownButton.background: orange3
+xfontsel.pane.commandBox.ownButton.foreground: snow
+xfontsel.pane.commandBox.countLabel.background: snow
+xfontsel.pane.viewPort.sampleText.background: #777777
+xfontsel.pane.viewPort.sampleText.foreground: snow
+xfontsel.pane.fieldBox.field0.background: #777777
+xfontsel.pane.fieldBox.field0.foreground: snow
+xfontsel.pane.fieldBox.field1.background: #777777
+xfontsel.pane.fieldBox.field1.foreground: snow
+xfontsel.pane.fieldBox.field2.background: #777777
+xfontsel.pane.fieldBox.field2.foreground: snow
+xfontsel.pane.fieldBox.field3.background: #777777
+xfontsel.pane.fieldBox.field3.foreground: snow
+xfontsel.pane.fieldBox.field4.background: #777777
+xfontsel.pane.fieldBox.field4.foreground: snow
+xfontsel.pane.fieldBox.field5.background: #777777
+xfontsel.pane.fieldBox.field5.foreground: snow
+xfontsel.pane.fieldBox.field6.background: #777777
+xfontsel.pane.fieldBox.field6.foreground: snow
+xfontsel.pane.fieldBox.field7.background: #777777
+xfontsel.pane.fieldBox.field7.foreground: snow
+xfontsel.pane.fieldBox.field8.background: #777777
+xfontsel.pane.fieldBox.field8.foreground: snow
+xfontsel.pane.fieldBox.field9.background: #777777
+xfontsel.pane.fieldBox.field9.foreground: snow
+xfontsel.pane.fieldBox.field10.background: #777777
+xfontsel.pane.fieldBox.field10.foreground: snow
+xfontsel.pane.fieldBox.field11.background: #777777
+xfontsel.pane.fieldBox.field11.foreground: snow
+xfontsel.pane.fieldBox.field12.background: #777777
+xfontsel.pane.fieldBox.field12.foreground: snow
+xfontsel.pane.fieldBox.field13.background: #777777
+xfontsel.pane.fieldBox.field13.foreground: snow
+xfontsel.pane.fieldBox*foreground: #000000
+xfontsel.pane.fieldBox.MenuButton.borderWidth: 1
+xfontsel.pane.fieldBox.MenuButton.internalHeight:1
+xfontsel.pane.fieldBox.MenuButton.internalWidth: 2
+xfontsel.pane.fieldBox.MenuButton.shapeStyle: rectangle
+!}}}
+ 
+ 
+!{{{ XCLOCK
+xclock*update: 1
+xclock*Mode: analog
+xclock*Background: #3F3F3F
+xclock*Border: #3F3F3F
+xclock*Foreground: #F0DFAF
+xclock*geometry: 120x120+1160+15
+!}}}
+ 
+ 
+!{{{ Xpdf
+xpdf*foreground: black
+xpdf*background: white
+xpdf*urlCommand: /usr/local/bin/siftweasel %s
+xpdf*antialias: yes
+xpdf*enableFreetype: yes
+!}}}
+ 
+ 
+!{{{ Xman
+Xman*Background: #3F3F3F
+Xman*Foreground: #F0DFAF
+Xman*bothShown: true
+Xman*topBox: false
+Xman*manualFontNormal: -xos4-terminus-*-*-*-*-*-*-*-*-*-*-iso8859-2
+Xman*manualFontBold: -xos4-terminus-bold-*-*-*-*-*-*-*-*-*-iso8859-2
+Xman*manualFontItalic: -xos4-terminus-*-*-*-*-*-*-*-*-*-*-iso8859-2
+Xman*directoryFontNormal: -xos4-terminus-*-*-*-*-*-*-*-*-*-*-iso8859-2
+!}}}
+ 
