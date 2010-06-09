@@ -8,7 +8,6 @@ if ( cp /dev/null "$errorlog" 2> /dev/null ); then
 
 fi
 # }}}
-#
 
 # {{{ Start aplications
 mpd /home/alucard/.mpd/config/mpd.conf &
