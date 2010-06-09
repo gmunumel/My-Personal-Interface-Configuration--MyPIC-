@@ -1,0 +1,9 @@
+background no
+out_to_console yes
+update_interval 2
+total_run_times 0
+use_spacer none
+double_buffer yes
+
+TEXT
+${if_empty ${exec awk '{print $2}' /proc/acpi/ac_adapter/AC0/state | grep 'on-line'}}^i(/home/jason/Build/dwm/dzen/bat_full_01.xpm)${else}^i(/home/jason/Build/dwm/dzen/ac_01.xpm)${endif} ${battery_percent}%  ^i(/home/jason/Build/dwm/dzen/cpu.xpm) ${cpu cpu1}% ^i(/home/jason/Build/dwm/dzen/mem.xpm) ${memperc}%  ^i(/home/jason/Build/dwm/dzen/temp.xpm) ${acpitemp}°C ^i(/home/jason/Build/dwm/dzen/fs_01.xpm) sda ${fs_used_perc /}% sdb ${fs_used_perc /home}%  ^i(/home/jason/Build/dwm/dzen/arch.xpm) ${execpi 900 ~/Scripts/pacman-up.pl} • ${if_existing /proc/net/route ra0}^i(/home/jason/Build/dwm/dzen/wifi_01.xpm) ^i(/home/jason/Build/dwm/dzen/net_down_03.xpm) ${downspeedf ra0} ^i(/home/jason/Build/dwm/dzen/net_up_03.xpm) ${upspeedf ra0}${else}${if_existing /proc/net/route eth0}^i(/home/jason/Build/dwm/dzen/wired.xpm) ^i(/home/jason/Build/dwm/dzen/net_down_03.xpm) ${downspeedf eth0} ^i(/home/jason/Build/dwm/dzen/net_up_03.xpm) ${upspeedf eth0}${endif}${endif} • ^fg(\#E0E0E0)${time %H:%M}^fg() 

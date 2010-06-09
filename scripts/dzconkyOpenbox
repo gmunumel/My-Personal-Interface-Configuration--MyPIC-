@@ -1,0 +1,45 @@
+#avoid flicker
+double_buffer yes
+
+#own window to run simultanious 2 or more conkys
+own_window  yes
+own_window_transparent no
+own_window_type normal
+own_window_hints undecorate,sticky,skip_taskbar,skip_pager 
+
+#borders
+draw_borders no
+border_margin 1
+
+#shades
+draw_shades no
+
+#position
+gap_x 6
+gap_y 6
+alignment top_left
+
+#behaviour
+update_interval 1
+
+#colour
+default_color  9f907d
+
+#default_shade_color 000000
+own_window_colour 303030
+
+#font
+use_xft yes
+xftfont bauhaus:pixelsize=9
+
+#to prevent window from moving
+use_spacer no
+minimum_size 1262 0
+
+#mpd
+mpd_host localhost
+mpd_port 6600
+
+TEXT
+${alignc}Kernel: ${color D7D3C5}$kernel   |  ${time %d %B} ${color D7D3C5}${time  %H:%M}  |  ${color} Up: ${color D7D3C5}${uptime_short}   |   ${color}Processes: ${color D7D3C5}$processes  ${color}Running: ${color D7D3C5}$running_processes   |  ${color}Cpu: ${color D7D3C5}${cpu}%   ${color}${cpugraph 10,80 AEA08E 9F907D} ${color D7D3C5}    |   ${color }Mem: ${color D7D3C5}$mem/$memmax - $memperc% ${color} ${membar 6,80}${color D7D3C5}    |   ${color }Net: ${color D7D3C5}${font}${downspeed eth0} Kb/s ${color}  ${downspeedgraph eth0 10,80 AEA08E 9F907D}  ${color D7D3C5} ${totaldown eth0} down
+${alignc} ${color }Root: ${color D7D3C5}${font}${fs_free /}  / ${fs_size /} - ${fs_free_perc /}%   |  ${color} Home: ${color D7D3C5}${fs_free /home}  / ${fs_size /home}  - ${fs_free_perc /home}%   | ${color} Arch-pkg: ${color D7D3C5}${font}${execi 300 perl ~/scripts/conky-updates.pl}  |   ${color}Email: ${color D7D3C5}${execi 300 python ~/scripts/gmail.py} ${color D7D3C5}    

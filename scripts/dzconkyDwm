@@ -1,0 +1,6 @@
+#! /bin/sh
+
+#FG='#aaaaaa'
+#BG='#1a1a1a'
+#FONT='-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*'
+(sleep 3s && conky -c $HOME/.conkyrcScrotwm | dzen2 -x '528' -y '0' -e '' -fg '#737373' -bg '#000000' -w '750' -h '14' -ta r -fn '-*-profont-medium-r-*-*-11-*-*-*-*-*-iso8859-*' -p ) &

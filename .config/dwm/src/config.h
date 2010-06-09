@@ -1,0 +1,1 @@
+/home/alucard/.config/dwm/config.h
