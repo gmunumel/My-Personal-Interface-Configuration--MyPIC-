@@ -1,0 +1,9 @@
+# vol up
+"amixer set Master 3+ unmute"
+  m:0x10 + c:123
+# vol dn
+"amixer set Master 3- unmute"
+  m:0x10 + c:122
+# vol mute/unmute
+"amixer set Master toggle"
+  m:0x10 + c:124
