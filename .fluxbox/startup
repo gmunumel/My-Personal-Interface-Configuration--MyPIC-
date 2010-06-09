@@ -5,7 +5,7 @@
 # Lines starting with a '#' are ignored.
 
 # Change your keymap:
-xmodmap "/home/alucard/.Xmodmap"
+#xmodmap "/home/alucard/.Xmodmap"
 
 # Applications you want to run with fluxbox.
 # MAKE SURE THAT APPS THAT KEEP RUNNING HAVE AN ''&'' AT THE END.
@@ -15,7 +15,7 @@ xmodmap "/home/alucard/.Xmodmap"
 # wmsmixer -w &
 # idesk &
 fbsetbg -l # sets the last background set.
-conky &
+conky -c $HOME/scripts/dzconkyFluxbox &
 
 # And last but not least we start fluxbox.
 # Because it is the last app you have to run it with ''exec'' before it.

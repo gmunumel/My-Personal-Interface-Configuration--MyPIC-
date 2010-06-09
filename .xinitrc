@@ -33,7 +33,6 @@ case $1 in
   awesome) exec awesome ;;
   blackbox) exec blackbox ;;
   fluxbox) 
-    $HOME/scripts/dzconkyFluxbox
     exec startfluxbox ;;
   dwm) 	
     $HOME/scripts/dzconkyDwm
@@ -48,7 +47,6 @@ case $1 in
 	#done &	
 	exec dwm ;;
   openbox) 
-    $HOME/scripts/dzconkyOpenbox
     exec openbox-session ;;
   *) exec $DEFAULT_SESSION ;;
 esac

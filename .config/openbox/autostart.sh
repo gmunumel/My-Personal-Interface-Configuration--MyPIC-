@@ -47,6 +47,7 @@
 #. $GLOBALAUTOSTART
 
 # Programs to launch at startup
+conky -c $HOME/scripts/dzconkyOpenbox &
 hsetroot -full ~/Imagenes/ergo_proxy_re_i.jpg &
 xcompmgr -c -t-5 -l-5 -r4.2 -o.55 &
 
