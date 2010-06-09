@@ -1,0 +1,667 @@
+#!/bin/sh -f
+# Configure wmii
+
+
+#---------- BEGINS SPECIAL CONFIGURATION --------------
+#A more complicated set of statusbar functions
+#As of now, use dzen for your OSD needs.  
+#Maybe switch to libnotify if I can get it to work adequately
+
+#TODO: Nice, fancy string array to keep track of (and easily change) bar names/content... Sorta like the daemons list or whatever
+
+#Urgent bar info will be garishly-colored and flash.
+BARCOLORS_URGENT='#ff4747 #e8ae5b #ff4747'
+BARCOLORS_URGENT1='#ff4747 #e8ae5b #ff4747'
+BARCOLORS_URGENT2='#e8ae5b #ff4747 #e8ae5b'
+BARCOLORS_NORMAL='#0480bd #111111 #111111'
+BARCOLORS_GREEN='#afc81c #111111 #111111'
+BARCOLORS_AMBER='#E8AE5B #111111 #111111'
+BARCOLORS_RED='#ff4747 #111111 #111111'
+BARCOLORS_GRAY='#555555 #111111 #111111'
+
+#State of animation for the blinking bars
+BLINK_STATE=0
+
+#Current IPv4 Address of the primary nic.
+#Needed by statusbar function and OSD Function, so global it is
+IP4=""
+
+MPDADDR="localhost:6600"
+
+createStatusBars()
+{
+        #wmii displays bars in alphabetical order, changing the numbers in front
+        #of the names will reorder the bars.
+        #Just remember to change them in the update and remove functions also.
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/00time
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/01net
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/02load
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/03mem
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/06vol
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/04fs1
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/05bat
+    echo -n $BARCOLORS_NORMAL | wmiir create /lbar/07mpd
+}
+
+updateStatusBars()
+{
+    #Update Blink State
+    if [ $BLINK_STATE -eq 0 ]
+    then
+        BLINK_STATE=1
+        BARCOLORS_URGENT=${BARCOLORS_URGENT1}
+    else
+    if [ $BLINK_STATE -eq 1 ]
+    then
+        BLINK_STATE=0
+        BARCOLORS_URGENT=${BARCOLORS_URGENT2}
+    fi
+    fi
+
+    echo -n  $(date +'%a %b %d %Y %I:%M') ' ' | wmiir write /lbar/00time
+    netStatus 'wlan0' | wmiir write /lbar/01net
+    batteryUse 'BAT0' | wmiir write /lbar/05bat
+    #fsStatus 'Home' | wmiir write /lbar/04fs1
+    memStatus | wmiir write /lbar/03mem
+    echo -n 'LD:'$(uptime | sed 's/.*://; s/,//g') ' ' | wmiir write /lbar/02load
+    mpdStatus | wmiir write /lbar/07mpd
+    volLvl Master | wmiir write /lbar/06vol
+
+    #Add a spacer to the "end" of the bar... Actually the beginning of rbar.
+        #Without this, the first tag on rbar will stretch across the space in the middle.
+    wmiir create /rbar/...spacer 
+}
+
+removeStatusBars()
+{
+    wmiir remove /lbar/00time
+    wmiir remove /lbar/01net
+    wmiir remove /lbar/02load
+    wmiir remove /lbar/03mem
+    wmiir remove /lbar/04fs1
+    wmiir remove /lbar/06vol
+    wmiir remove /lbar/05bat
+    wmiir remove /lbar/07mpd
+}
+
+
+
+#Display Battery Information
+batteryUse()
+{
+    CURRENT=$(cat /sys/class/power_supply/$1/charge_now)
+    FULL=$(cat /sys/class/power_supply/$1/charge_full_design)
+
+    PERCENT=$(echo 'scale=2; ('${CURRENT}'/'${FULL}') * 100' | 
+        bc | sed -e 's/\([0-9]*\)\.[0-9]*/\1/')
+
+    STATUS=$(cat /sys/class/power_supply/$1/status)
+
+    #Simple awk program just divides up the remaining capcity (in mA-Hours) 
+    #by the current charge/discgarge rate (in mA) and then divides the result
+    #up into hours an minutes.
+    TIME=$(cat /proc/acpi/battery/BAT0/state | awk '/rate/ {rate=$3}\
+        /capacity/ {cap=$3}\
+        END {time=cap/rate;\
+        hours = int(time);\
+        minutes = int((time - hours) * 60);\
+        printf("%.02d:%.02d\n", hours,minutes)}')
+
+    if [ $STATUS = "Discharging" ]
+    then
+        if [ $PERCENT -lt 3 ]
+        then
+            echo -n $BARCOLORS_URGENT $1': LOW -' $PERCENT'%' '-' $TIME ' '
+        else 
+            if [ $PERCENT -lt 11 ]
+            then
+            echo -n $BARCOLORS_RED $1': Dis -' $PERCENT'%' '-' $TIME ' '
+            else
+                if [ $PERCENT -lt 26 ]
+                then
+                echo -n $BARCOLORS_AMBER $1': Dis -' $PERCENT'%' '-' $TIME ' ' 
+                else                
+                echo -n $BARCOLORS_GREEN $1': Dis -' $PERCENT'%' '-' $TIME ' '
+                fi
+                fi
+            fi    
+        else
+        echo -n $BARCOLORS_NORMAL $1':' $(echo $STATUS |
+        sed -ne 's/\(...\).*/\1/p') - $PERCENT'%' '-' $TIME ' '    
+    fi
+}
+
+#Display Volume Information
+volLvl()
+{
+    OUT=$(amixer get $1)
+    VOLUME=$( echo -n $OUT | 
+        sed -ne 's/[^\[]*\([\[[0-9]*%\]\).*/\1/p')
+    STATE=$( echo -n $OUT |
+        sed -ne 's/off/s/p')
+    if [ -e $STATE ]
+    then
+    echo -n    $BARCOLORS_NORMAL 'VOL: '$1':' $VOLUME ' '
+    else
+    echo -n $BARCOLORS_GRAY  'VOL: '$1':' $VOLUME ' '
+    fi
+}
+
+#Display FS Usage
+fsStatus()
+{
+    MEM=$(df -m | grep $1);    
+    TOTAL=$(echo $MEM | awk 'END{print $2 }')
+    USED=$(echo $MEM | awk 'END{print $3}')
+    FREE=$(echo $MEM | awk 'END{print $4}')
+    PERCENT=$(echo 'scale=2; ('${USED}'/'${TOTAL}') * 100' | 
+        bc| sed -e 's/\([0-9]*\)\.[0-9]*/\1/') 
+    USED=$(echo 'scale=2; base='$USED';\
+         if( base >= 1000000){\
+             base = base/1000000;\
+             print base; "TiB"}\
+        else {print base/1000; "GiB"}' | bc | 
+            sed -e 's/\([0-9]*\)\.[0-9]*/\1/')
+    TOTAL=$(echo 'scale=2;base='$TOTAL';\
+        if( base >= 1000000){\
+            base = base/1000000;\
+            print base/1000; "TiB"}\
+        else {print base/1000; "GiB"}' | bc |
+                   sed -e 's/\([0-9]*\)\.[0-9]*/\1/')
+    if [ $PERCENT -lt 50 ]
+    then
+	echo -n $BARCOLORS_GREEN 'Home:' $USED' /' $TOTAL ' '
+        else
+        if [ $PERCENT -lt 90 ]
+        then
+	    echo -n $BARCOLORS_AMiBER 'Home:' $USED' /' $TOTAL ' '
+            else                
+                echo -n $BARCOLORS_RED 'Home:' $USED' /' $TOTAL ' '
+            fi
+    fi
+
+}
+#Display Memory Usage
+memStatus()
+{
+    MEM=$(free -m | grep -e 'buffers\/cache');    
+    USED=$(echo $MEM | sed -ne 's/[^0-9]*\([0-9]*\).*/\1/p')
+    FREE=$(echo $MEM | sed -ne 's/[^0-9]*\ *[0-9]*\ *\([0-9]*\).*/\1/p')
+    TOTAL=$(echo 'scale=2; per=('${USED}'+'${FREE}'); print per' | 
+        bc| sed -e 's/\([0-9]*\)\.[0-9]*/\1/') 
+    PERCENT=$(echo 'scale=2; ('${USED}'/'${TOTAL}') * 100' | 
+        bc| sed -e 's/\([0-9]*\)\.[0-9]*/\1/') 
+    USED=$(echo 'scale=2; base='$USED';\
+        if( base >= 1000){\
+            base = base/1000;\
+            print base; "GiB"}\
+        else {print base; "MiB"}' | bc )
+    TOTAL=$(echo 'scale=2;base='$TOTAL';\
+        if( base >= 1000){\
+            base = base/1000;\
+            print base; "GiB"}\
+        else {print base; "MiB"}' | bc ) 
+    if [ $PERCENT -lt 50 ]
+    then
+        echo -n $BARCOLORS_GREEN ' Mem:' $USED' /' $TOTAL 
+        else
+        if [ $PERCENT -lt 90 ]
+        then
+            echo -n $BARCOLORS_AMiBER ' Mem:' $USED'/' $TOTAL 
+            else                
+                echo -n $BARCOLORS_RED 'Mem' $USED'/' $TOTAL 
+            fi
+    fi
+}
+
+#Display MPD Information
+mpdStatus()
+{ 
+    #Default Address
+    if [ -z "$1" ] 
+    then
+        ADDR="localhost:6600"
+    else
+        ADDR=$1
+    fi
+
+    #Status
+    STATUS=`echo status | socat - TCP4:localhost:6600 | grep state | sed -e 's/.*: //'`
+
+    case $STATUS in
+        stop)
+        echo -n $BARCOLORS_RED 'MPD: Stopped'
+        ;;
+        
+        play | pause)
+        TITLE=`echo currentsong | socat - TCP4:localhost:6600 | grep Title | sed -e 's/.*: //'`
+        
+        ARTIST=`echo currentsong | socat - TCP4:localhost:6600 | grep AlbumArtist | sed -e 's/.*: //'`
+        if [ -z $ARTIST ]
+        then
+        ARTIST=`echo currentsong | socat - TCP4:localhost:6600 | grep Artist | sed -e 's/.*: //'`
+        fi
+        if [ "$STATUS" = "play" ]
+        then
+        echo -n $BARCOLORS_NORMAL 'MPD:' $TITLE '-' $ARTIST
+        else
+        echo -n $BARCOLORS_AMBER 'MPD:' $TITLE '-' $ARTIST
+        fi
+        ;;
+
+        *)
+        echo -n 'Something bad happened with MPD'
+        ;;
+    esac
+}
+
+#Display Network Information
+netStatus()
+{
+    CONFDATA=$(iwconfig $1)
+
+    #As of now, the only requirement for connection is that we have an IP Address
+    IP4=$(ifconfig wlan0 | sed -ne 's/\ *inet addr:\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*/\1/p')
+
+    if [ -e $IP4 ]
+    then
+        echo -n $BARCOLORS_RED $1: ' DOWN! '
+    else
+        QUALITY=$(echo ${CONFDATA} | sed -e 's/.*Link Quality=\([0-9]*\).*/\1/')
+        if [ $QUALITY -lt 50 ]
+        then
+        echo -n $BARCOLORS_AMBER $1: "UP" : ${QUALITY} 
+        else
+        echo -n $BARCOLORS_GREEN $1: "UP" : ${QUALITY} 
+    fi
+    fi
+}
+
+#TODO: Replace specific device names with more flexible solution
+#Propsed: Rename bars after relevant device. Case statements like *wlan0 or something likethat 
+popupOSD()
+{
+    #Remove Other Instances of dzen2
+    killall -s SIGKILL dzen2
+    case $1 in
+        00time)
+        cal | dzen2 -bg '#111111' -fn drift -x 0 -y 742 -w 140 -l 6 -p 4
+        ;;
+        01net)
+        CONFDATA=$(iwconfig wlan0)
+        ESSID=$(echo ${CONFDATA} | sed -ne 's/.*ESSID:"\([^"]*\)".*/\1/p')
+        GATEWAY=$(route | grep wlan0 | awk '/default/{print $2}')
+        IP4=$(ifconfig wlan0 | sed -ne 's/\ *inet addr:\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\).*/\1/p')
+        AP=$(echo ${CONFDATA} | sed -ne 's/.*Access Point:\ *\(..:..:..:..:..:..\).*/\1/p')
+        echo  "ESSID: $ESSID\nGatewy$GATEWAY\nOwnIP:$IP4\nAP: $AP" | 
+            dzen2 -bg '#111111' -fn drift -x 141 -y 742 -w 130 -l 3 -p 4 -ta left
+        ;;
+        02load)
+        sensors | sed -ne 's/Core \([0-3]:\)\ *.\([0-9]*\.[0-9]*\).*/Core \1 \2C/p' |
+            dzen2 -bg '#111111' -fn drift -x 240 -y 742 -w 123 -l 3 -p 4 -ta left
+        ;;
+        03mem)
+        free -m | awk '/Mem/{printf("Mem: %sMiB / %sMiB\nBuffers: %sMiB\nCached: %sMiB\n", $3,$2,$6,$7 )}\
+                /Swap/{printf("Swap: %sMiB / %sMiB\n", $3, $2)}' |
+            dzen2 -bg '#111111' -fn drift -x 368 -y 742 -w 150 -l 3 -p 4 -ta left
+        ;;
+        04fs1)
+        cat /etc/mtab | grep -e ' / ' | awk 'END{printf ("%s\n%s\n%s\n%s\n", $1, $2, $3, $4)}' |
+            dzen2 -bg '#111111' -fn drift -x 509 -y 742 -w 150 -l 3 -p 4 -ta left
+        ;;
+        05fs2)
+        cat /etc/mtab | grep -e 'winDrive' | awk 'END{printf ("%s\n%s\n%s\n%s\n", $1, $2, $3, $4)}' |
+            dzen2 -bg '#111111' -fn drift -x 625 -y 742 -w 150 -l 3 -p 4 -ta left
+        ;;
+        05bat)
+        ;;
+        07mpd)
+        ;;
+    esac
+}
+
+
+#---------- ENDS SPECIAL CONFIGURATION ----------------
+
+# Configuration Variables
+MODKEY1=Mod1
+MODKEY=Mod4
+UP=k
+DOWN=j
+LEFT=h
+RIGHT=l
+
+# Colors tuples: "<text> <background> <border>"
+WMII_NORMCOLORS='#BBBBBB #222222 #000000'
+WMII_FOCUSCOLORS='#EEEEEE #005577 #006699'
+
+#WMII_BACKGROUND='#111111'
+WMII_BACKGROUND='/home/alucard/Imagenes/magicIsland.jpg'
+WMII_FONT='-*-fixed-medium-r-*-*-10-*-*-*-*-*-*-*'
+
+set -- $(echo $WMII_NORMCOLORS $WMII_FOCUSCOLORS)
+WMII_MENU="dmenu -b -fn '$WMII_FONT' -nf '$1' -nb '$2' -sf '$4' -sb '$5'"
+WMII_9MENU="wmii9menu -font '$WMII_FONT' -nf '$1' -nb '$2' -sf '$4' -sb '$5' -br '$6'"
+WMII_TERM="urxvt"
+
+# Column Rules
+wmiir write /colrules <<!
+/.*/ -> 58+42
+!
+
+# Tagging Rules
+wmiir write /tagrules <<!
+/XMMS.*/ -> ~
+/MPlayer.*/ -> ~
+/.*/ -> sel
+/.*/ -> 1
+!
+
+# Status Bar Info
+#status() {
+#	echo -n $(uptime | sed 's/.*://; s/,//g') '|' $(date)
+#}
+
+# Event processing
+#  Processed later by `wmiiloop' and evaled.
+#  Duplicate the eval line and replace 'eval' with 'echo' for details.
+eventstuff() {
+	cat <<'!'
+	# Events
+	Event Start
+		case "$1" in
+		wmiirc)
+			exit;
+		esac
+	Event Key
+		fn=$(echo "$@" | sed 's/[^a-zA-Z_0-9]/_/g')
+		Key_$fn "$@"
+	#Event CreateTag
+	#	echo "$WMII_NORMCOLORS" "$@" | wmiir create "/lbar/$@"
+	#Event DestroyTag
+	#	wmiir remove "/lbar/$@"
+	#Event FocusTag
+	#	wmiir xwrite "/lbar/$@" "$WMII_FOCUSCOLORS" "$@"
+	#Event UnfocusTag
+	#	wmiir xwrite "/lbar/$@" "$WMII_NORMCOLORS" "$@"
+	#Event UrgentTag
+	#	shift
+	#	wmiir xwrite "/lbar/$@" "*$@"
+	#Event NotUrgentTag
+	#	shift
+	#	wmiir xwrite "/lbar/$@" "$@"
+	
+	#----------- N0DIX MODIFICATION -----------
+	Event CreateTag
+    		echo "$WMII_NORMCOLORS" "$@" | wmiir create "/rbar/$@"
+	Event DestroyTag
+    		wmiir remove "/rbar/$@"
+	Event FocusTag
+    		wmiir xwrite "/rbar/$@" "$WMII_FOCUSCOLORS" "$@"
+	Event UnfocusTag
+    		wmiir xwrite "/rbar/$@" "$WMII_NORMCOLORS" "$@"
+	Event UrgentTag
+    		shift
+    		wmiir xwrite "/rbar/$@" "*$@"
+	Event NotUrgentTag
+    		shift
+    		wmiir xwrite "/rbar/$@" "$@"
+	#---------- ENDS N0DIX MODIFICATION -----------
+
+	Event LeftBarClick
+		shift
+		wmiir xwrite /ctl view "$@"
+	# Actions
+	Action quit
+		wmiir xwrite /ctl quit
+	Action exec
+		wmiir xwrite /ctl exec "$@"
+	Action rehash
+		proglist $PATH >$progsfile
+	#Action status
+	#	set +xv
+	#	if wmiir remove /rbar/status 2>/dev/null; then
+	#		sleep 2
+	#	fi
+	#	echo "$WMII_NORMCOLORS" | wmiir create /rbar/status
+	#	while status | wmiir write /rbar/status; do
+	#		sleep 1
+	#	done
+	#---------- ADD BY N0DIX ----------------
+	Action status
+    		set +xv
+    		if removeStatusBars 2>/dev/null; then
+        		sleep 2
+    		fi
+    		createStatusBars
+    		while true; do
+        		updateStatusBars
+        		sleep 0.5
+    		done
+	Event RightBarClick
+    		shift
+    		wmiir xwrite /ctl view "$@"
+	#--------- FIN DE N0DIX ---------------
+	Event ClientMouseDown
+		client=$1; button=$2
+		case "$button" in
+		3)
+			do=$(eval $WMII_9MENU -initial "${menulast:-SomeRandomName}" Nop Delete Fullscreen)
+			case "$do" in
+			Delete)
+				wmiir xwrite /client/$client/ctl kill;;
+			Fullscreen)
+				wmiir xwrite /client/$client/ctl Fullscreen on;;
+			esac
+			menulast=${do:-"$menulast"}
+		esac
+	# Key Bindings
+	Key $MODKEY-Control-t
+		case $(wmiir read /keys | wc -l | tr -d ' \t\n') in
+		0|1)
+			echo -n $Keys | tr ' ' '\012' | wmiir write /keys
+			wmiir xwrite /ctl grabmod $MODKEY;;
+		*)
+			wmiir xwrite /keys $MODKEY-Control-t
+			wmiir xwrite /ctl grabmod Mod3;;
+		esac
+	Key $MODKEY-space
+		wmiir xwrite /tag/sel/ctl select toggle
+	Key $MODKEY-d
+		wmiir xwrite /tag/sel/ctl colmode sel default
+	Key $MODKEY-s
+		wmiir xwrite /tag/sel/ctl colmode sel stack
+	Key $MODKEY-m
+		wmiir xwrite /tag/sel/ctl colmode sel max
+	Key $MODKEY-Shift-q
+		Action $(actionlist | eval $WMII_MENU) &
+	Key $MODKEY1-F2
+		sh -c "$(eval $WMII_MENU <$progsfile)" &
+	Key $MODKEY-t
+		wmiir xwrite /ctl "view $(tagsmenu)" &
+	Key $MODKEY-Return
+		eval $WMII_TERM &
+	Key $MODKEY-Shift-space
+		wmiir xwrite /tag/sel/ctl send sel toggle
+	Key $MODKEY1-F10
+		wmiir xwrite /client/sel/ctl Fullscreen toggle
+	Key $MODKEY-Shift-k
+		wmiir xwrite /client/sel/ctl kill
+	Key $MODKEY-Shift-t
+		wmiir xwrite "/client/$(wmiir read /client/sel/ctl)/tags" "$(tagsmenu)" &
+	Key $MODKEY-$LEFT
+		wmiir xwrite /tag/sel/ctl select left
+	Key $MODKEY-$RIGHT
+		wmiir xwrite /tag/sel/ctl select right
+	Key $MODKEY-$DOWN
+		wmiir xwrite /tag/sel/ctl select down
+	Key $MODKEY-$UP
+		wmiir xwrite /tag/sel/ctl select up
+	Key $MODKEY-Shift-$LEFT
+		wmiir xwrite /tag/sel/ctl send sel left
+	Key $MODKEY-Shift-$RIGHT
+		wmiir xwrite /tag/sel/ctl send sel right
+	Key $MODKEY-Shift-$DOWN
+		wmiir xwrite /tag/sel/ctl send sel down
+	Key $MODKEY-Shift-$UP
+		wmiir xwrite /tag/sel/ctl send sel up
+!
+	for i in 0 1 2 3 4 5 6 7 8 9; do
+		cat <<!
+	# 1=www, 2=music, 3=dev1, 4=dev2, 
+Key $MODKEY-1
+           	wmiir xwrite /ctl view "www"
+Key $MODKEY-2
+	        wmiir xwrite /ctl view "music"
+Key $MODKEY-3
+           	wmiir xwrite /ctl view "dev1"
+Key $MODKEY-4 
+           	wmiir xwrite /ctl view "dev2"
+Key $MODKEY-5
+		wmiir xwrite /ctl view "5"
+Key $MODKEY-6
+		wmiir xwrite /ctl view "6"
+Key $MODKEY-7
+		wmiir xwrite /ctl view "7"
+Key $MODKEY-8
+		wmiir xwrite /ctl view "8"
+Key $MODKEY-9
+		wmiir xwrite /ctl view "9"
+Key $MODKEY-Shift-1
+		wmiir xwrite /client/sel/tags "www"
+Key $MODKEY-Shift-2
+		wmiir xwrite /client/sel/tags "music"
+Key $MODKEY-Shift-3
+		wmiir xwrite /client/sel/tags "dev1"
+Key $MODKEY-Shift-4
+		wmiir xwrite /client/sel/tags "dev2"
+Key $MODKEY-Shift-5
+		wmiir xwrite /client/sel/tags "5"
+Key $MODKEY-Shift-6
+		wmiir xwrite /client/sel/tags "6"
+Key $MODKEY-Shift-7
+		wmiir xwrite /client/sel/tags "7"
+Key $MODKEY-Shift-8
+		wmiir xwrite /client/sel/tags "8"
+Key $MODKEY-Shift-9
+		wmiir xwrite /client/sel/tags "9"
+
+!
+	done
+}
+
+# WM Configuration
+wmiir write /ctl << EOF
+font $WMII_FONT
+focuscolors $WMII_FOCUSCOLORS
+normcolors $WMII_NORMCOLORS
+grabmod $MODKEY
+border 1
+EOF
+
+export WMII_MENU WMII_9MENU WMII_FONT WMII_TERM
+export WMII_FOCUSCOLORS WMII_SELCOLORS WMII_NORMCOLORS
+
+# Feed events to `wmiiloop' for processing
+eval "$(eventstuff | sed 's/^[	]//' | { . wmiiloop; })"
+
+echo "$Keys" | tr ' ' '\n' | wmiir write /keys
+
+# Functions
+Action() {
+	action=$1; shift
+	if [ -n "$action" ]; then
+		Action_$action "$@" \
+		|| conf_which $action "$@"
+	fi
+}
+
+proglist() {
+	paths=$(echo "$@" | sed 'y/:/ /')
+	ls -lL $paths 2>/dev/null \
+		| awk '$1 ~ /^[^d].*x/ && NF > 2 { print $NF }' \
+		| sort | uniq
+}
+
+# Misc
+progsfile="$WMII_NS_DIR/.proglist"
+Action status &
+proglist $PATH >$progsfile &
+
+#xsetroot -solid "$WMII_BACKGROUND" &
+awsetbg -f "$WMII_BACKGROUND" &
+
+# Setup Tag Bar
+#seltag="$(wmiir read /tag/sel/ctl 2>/dev/null)"
+#wmiir ls /lbar |
+#while read bar; do
+#	wmiir remove "/lbar/$bar"
+#done
+#wmiir ls /tag | sed -e 's|/||; /^sel$/d' |
+#while read tag; do
+#	if [ "X$tag" = "X$seltag" ]; then
+#		echo "$WMII_FOCUSCOLORS" "$tag" | wmiir create "/lbar/$tag" 
+#	else
+#		echo "$WMII_NORMCOLORS" "$tag" | wmiir create "/lbar/$tag"
+#	fi
+#done
+
+#---------- CHANGE BY N0DIX ------------
+#Setup Tag Bar
+
+seltag="$(wmiir read /tag/sel/ctl 2>/dev/null)"
+wmiir ls /rbar |
+while read bar; do
+    wmiir remove "/rbar/$bar"
+done
+wmiir ls /tag | sed -e 's|/||; /^sel$/d' |
+while read tag; do
+    if [ "X$tag" = "X$seltag" ]; then
+        echo "$WMII_FOCUSCOLORS" "$tag" | wmiir create "/rbar/$tag" 
+    else
+        echo "$WMII_NORMCOLORS" "$tag" | wmiir create "/rbar/$tag"
+    fi
+done
+
+
+# Setup Tag Bar
+#IFS="$wi_newline"
+#wmiir rm $(wmiir ls /rbar | sed 's,^,/rbar/,') >/dev/null
+#seltag=$(wmiir read /tag/sel/ctl | sed 1q)
+#unset IFS
+#wi_tags | while read tag
+#do
+#    if [ "$tag" = "$seltag" ]; then
+#        echo "$WMII_FOCUSCOLORS" "$tag"
+#    else
+#        echo "$WMII_NORMCOLORS" "$tag"
+#    fi | wmiir create "/rbar/$tag"
+#done
+#--------- ENDS N0DIX CHANGE ----------
+
+# More functions
+tagsmenu() {
+        wmiir ls /tag | sed 's|/||; /^sel$/d' | eval $WMII_MENU
+}
+
+actionlist() {
+	{	proglist $WMII_CONFPATH
+		echo -n $Actions | tr ' ' '\012'
+	} | sort | uniq
+}
+
+conf_which() {
+	which=$(which which)
+	prog=$(PATH="$WMII_CONFPATH" $which $1); shift
+	[ -n "$prog" ] && $prog "$@"
+}
+
+# Stop any running instances of wmiirc
+echo Start wmiirc | wmiir write /event || exit 1
+
+wmiir read /event |
+while read event; do
+	set -- $event
+	event=$1; shift
+	Event_$event $@
+done 2>/dev/null
