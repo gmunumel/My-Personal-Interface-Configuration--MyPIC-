@@ -41,8 +41,8 @@ URxvt*cursorBlink : true
  
 !URxvt*urgentOnBell : true
  
-Urxvt*font : -*-dina-medium-*-*-*-13-*-*-*-*-*-*-*
-URxvt*boldFont : -*-dina-bold-*-*-*-13-*-*-*-*-*-*-*
+!!Urxvt*font : -*-terminal-*-*-*-*-14-*-*-*-*-*-*-*
+!!URxvt*boldFont : -*-terminal-bold-*-*-*-14-*-*-*-*-*-*-*
 !URxvt.font: xft:Monospace:pixelsize=10:antialias=true
 !URxvt*italicFont : -*-dina-medium-i-normal-*-12-*-*-*-*-*-iso8859-1
 !URxvt*boldItalicFont : -*-dina-bold-i-normal-*-12-*-*-*-*-*-iso8859-1
@@ -51,12 +51,12 @@ URxvt*boldFont : -*-dina-bold-*-*-*-13-*-*-*-*-*-*-*
 !URxvt*boldFont : xft:DejaVu Sans 
 !Mono:style=bold:antialias=true:pixelsize=12
 !-----1-
-URxvt*italicFont : xft:DejaVu Sans 
+!!URxvt*italicFont : xft:Impact
 !-----2--
 !Mono:style=italic:antialias=true:pixelsize=12
 !-----1----
-URxvt*boldItalicFont : xft:DejaVu Sans 
-Mono:style=bolditalic:antialias=true:pixelsize=12
+!!URxvt*boldItalicFont : xft:Impact
+!!Mono:style=bolditalic:antialias=true:pixelsize=12
 !-----2---
  
 !URxvt*perl-lib : /usr/lib/urxvt/perl/

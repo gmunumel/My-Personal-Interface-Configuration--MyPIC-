@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_cnt =4
 let g:netrw_dirhist_1='/home/alucard/scripts'
 let g:netrw_dirhist_2='/home/alucard/.config/openbox'
 let g:netrw_dirhist_3='/var/run'
+let g:netrw_dirhist_4='/home/alucard/Documentos/django_projects/hello/account'
