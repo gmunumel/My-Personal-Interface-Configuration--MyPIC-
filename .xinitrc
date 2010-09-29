@@ -28,7 +28,12 @@ case $1 in
   ratpoison) exec ratpoison ;;
   wmii) exec wmii ;;
   ion3) exec ion3 ;;
-  xmonad) exec xmonad ;;
+  xmonad) 
+  	$HOME/scripts/dzconkyScrotwm
+ 	awsetbg -f /home/alucard/Imagenes/ian-o-phelan-1280x800.jpg
+	xcompmgr -c -t-5 -l-5 -r4.2 -o.55 & 
+	xsetroot -cursor_name left_ptr
+  	exec xmonad ;;
   awesome) exec awesome ;;
   blackbox) exec blackbox ;;
   fluxbox) 

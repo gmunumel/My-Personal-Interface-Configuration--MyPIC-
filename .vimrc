@@ -120,3 +120,8 @@ set statusline=%<[%02n]\ %F%(\ %m%h%w%y%r%)\ %a%=\ %8l,%c%V/%L\ (%P)\ [%08O:%02B
 "set list
 "set listchars=tab:\-\ ,trail:-
 
+" Agregando configuracion para JFlex
+augroup filetype
+	au BufRead,BufNewFile *.flex,*.jflex    set filetype=jflex
+augroup END
+au Syntax jflex    so ~/.vim/syntax/jflex.vim
