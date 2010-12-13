@@ -12,6 +12,7 @@ fi
 # {{{ Start aplications
 mpd /home/alucard/.mpd/config/mpd.conf &
 xbindkeys &
+xmodmap ~/.xmodmaprc
 # }}}
 
 # {{{ Sessions
@@ -26,8 +27,6 @@ case $1 in
     xsetroot -cursor_name left_ptr
     exec scrotwm ;;
   ratpoison) exec ratpoison ;;
-  wmii) exec wmii ;;
-  ion3) exec ion3 ;;
   xmonad) 
   	$HOME/scripts/dzconkyScrotwm
  	awsetbg -f /home/alucard/Imagenes/ian-o-phelan-1280x800.jpg

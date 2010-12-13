@@ -56,14 +56,14 @@ layouts = {
 tags = {}
 tags.settings = {
     { name = "www",       layout = layouts[7], mwfact = 0.550  }, 
-    { name = "music",     layout = layouts[9]  },
     { name = "dev1",      layout = layouts[1]  },
     { name = "dev2",      layout = layouts[1]  },
-    { name = "5",         layout = layouts[2]  },
-    { name = "6",         layout = layouts[3]  },
+    { name = "4",         layout = layouts[2]  },
+    { name = "5",         layout = layouts[3]  },
+    { name = "6",         layout = layouts[1], },
     { name = "7",         layout = layouts[1], },
     { name = "8",         layout = layouts[1], },
-    { name = "9",         layout = layouts[1], },
+    { name = "music",     layout = layouts[9]  },
     --{ name = "9",         layout = layouts[9], }
 }
 
