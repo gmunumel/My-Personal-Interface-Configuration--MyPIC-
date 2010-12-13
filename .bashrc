@@ -50,7 +50,8 @@ match_lhs=""
 	&& match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
-if ${use_color} ; then
+#if ${use_color} ; then
+if true ; then
 	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
 	if type -P dircolors >/dev/null ; then
 		if [[ -f ~/.dir_colors ]] ; then
@@ -94,7 +95,7 @@ alias umountpen='sudo umount /media/pen'
 # alias pacman='packer'
 alias mountdvd='sudo  mount -t iso9660 -o ro /dev/cdrom dvd/'
 alias umountdvd='sudo umount /media/dvd'
-alias shn='shutdown -h now'
+alias shn='sudo shutdown -h now'
 alias mpdup='mpc update / --wait'
 alias lsorhpans='sudo pacman -Qdtq'
 alias rmorphans='sudo pacman -Rs $(sudo pacman -Qtdq)'
@@ -111,4 +112,11 @@ alias grub2-update='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 alias music='ncmpcpp'
 alias gitpull='git commit -m "update files"; git push origin master'
 alias rm='rm -r'
-alias ejemplosJflex='cd /tmp/packerbuild-0/jflex/jflex/src/jflex-1.4.3/examples'
+alias jflexproy1='cd ~/Documentos/uni/sept-dic\ 10/trad-inter/lab/DooD'
+alias jflexproy2='cd ~/Documentos/uni/sept-dic\ 10/trad-inter/lab/DooD2'
+alias jflexproy3='cd ~/Documentos/uni/sept-dic\ 10/trad-inter/lab/DooD3'
+alias proygraficas='cd ~/Documentos/uni/sept-dic\ 10/graficas/lab/spaceInvaders/'
+alias proygraficas2='cd ~/Documentos/uni/sept-dic\ 10/graficas/lab/proy2/proy2'
+alias proygraficas3='cd ~/Documentos/uni/sept-dic\ 10/graficas/lab/proy3/killthemall'
+alias comptar='tar czfv '
+alias reconection='sudo sh scripts/jDownloader/reconexion.sh'

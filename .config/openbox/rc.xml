@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <openbox_config xmlns="http://openbox.org/3.4/rc">
   <resistance>
     <strength>10</strength>
@@ -112,9 +113,9 @@
     <firstdesk>1</firstdesk>
     <names>
       <name>www</name>
-      <name>music</name>
       <name>dev1</name>
       <name>dev2</name>
+      <name>4</name>
       <name>5</name>
       <name>6</name>
       <name>7</name>

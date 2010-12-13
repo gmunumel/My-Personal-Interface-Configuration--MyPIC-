@@ -512,11 +512,11 @@ eventstuff() {
 Key $MODKEY-1
            	wmiir xwrite /ctl view "www"
 Key $MODKEY-2
-	        wmiir xwrite /ctl view "music"
-Key $MODKEY-3
            	wmiir xwrite /ctl view "dev1"
-Key $MODKEY-4 
+Key $MODKEY-3 
            	wmiir xwrite /ctl view "dev2"
+Key $MODKEY-4
+		wmiir xwrite /ctl view "4"
 Key $MODKEY-5
 		wmiir xwrite /ctl view "5"
 Key $MODKEY-6
@@ -526,7 +526,7 @@ Key $MODKEY-7
 Key $MODKEY-8
 		wmiir xwrite /ctl view "8"
 Key $MODKEY-9
-		wmiir xwrite /ctl view "9"
+	    wmiir xwrite /ctl view "music"
 Key $MODKEY-Shift-1
 		wmiir xwrite /client/sel/tags "www"
 Key $MODKEY-Shift-2
